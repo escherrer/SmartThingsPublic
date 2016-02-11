@@ -40,31 +40,46 @@ def initialized() {
 
 def contactHandler(evt) {
 
-	log.debug "Contact is in ${evt.value} state"
+	log.debug "Contact changed to ${evt.value} state"
 
-  	if("open" == evt.value) {
-        sirens?.siren()
-      	sirens?.off()
-      	runOnce(new Date(now() + (60000 * reminder)), checkSwitch)
+  	if(evt.value == "open") {
+    	log.debug "Beginning switch check"
+		checkSwitch()
     }
 }
 
 def checkSwitch() {
+	log.debug "CheckSwitch Begin"
+    
 	def currentState = contacts?.currentState("contact")
 	def isAnyOpen = false
     
     currentState.each {
     	if (it != null) {
         	if (it.value == "open") {
-    			log.debug "Open!"
                 isAnyOpen = true
             }
 		}
     }
     
     if (isAnyOpen) {
-        sirens?.siren()
-        sirens?.off()
-        runOnce(new Date(now() + (60000 * reminder)), checkSwitch)
+        log.debug "There is a contact open, beeping siren."
+		BeepSiren()
+        def reminderMilliseconds = getReminderMilliseconds()
+        runOnce(new Date(now() + reminderMilliseconds), checkSwitch)
+        log.debug "Reminder set for ${reminderMinutes} milliseconds."
     }
+    
+    log.debug "CheckSwitch End"
+}
+
+def getReminderMilliseconds() {
+	60000 * reminder
+}
+
+
+def BeepSiren() {
+    sirens?.siren()
+    sirens?.off()
+    sirens?.off()
 }
