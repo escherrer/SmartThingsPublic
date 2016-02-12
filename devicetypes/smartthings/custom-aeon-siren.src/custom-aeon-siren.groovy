@@ -48,7 +48,7 @@ metadata {
 		state "default", label:'', action:"alarm.off", icon:"st.secondary.off"
 	}
 	standardTile("chime", "device.alarm", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
-		state "default", label:'Chime', action:"chime(1,1)", icon:"st.secondary.on"
+		state "default", label:'Chime', action:"chime(500)", icon:"st.secondary.on"
 	}
     
 	preferences {
@@ -70,15 +70,15 @@ def updated() {
 	Short sound = (settings.sound as Short) ?: 1
 	Short volume = (settings.volume as Short) ?: 3
 
-	if (sound != state.sound || volume != state.volume) {
-		state.sound = sound
-		state.volume = volume
-		return response([
-			secure(zwave.configurationV1.configurationSet(parameterNumber: 37, size: 2, configurationValue: [sound, volume])),
-			"delay 1000",
-			secure(zwave.basicV1.basicSet(value: 0x00)),
-		])
-	}
+    if (sound != state.sound || volume != state.volume) {
+        state.sound = sound
+        state.volume = volume
+        return response([
+            secure(zwave.configurationV1.configurationSet(parameterNumber: 37, size: 2, configurationValue: [sound, volume])),
+            "delay 1000",
+            secure(zwave.basicV1.basicSet(value: 0x00)),
+        ])
+    }
 }
 
 def parse(String description) {
@@ -149,29 +149,13 @@ def test() {
 	]
 }
 
-def chime(Short sound, Short volume) {
-    Short currentSound = (settings.sound as Short) ?: 1
-    Short currentVolume = (settings.volume as Short) ?: 3
-    
-    log.debug "Changing sound to ${sound}, volume to ${volume}"
-    response([
-        secure(zwave.configurationV1.configurationSet(parameterNumber: 37, size: 2, configurationValue: [sound, volume])),
-        "delay 1000",
-        secure(zwave.basicV1.basicSet(value: 0x00))
-	])
-    log.debug "Chiming..."
-    [   
+def chime(Short duration) {
+    [
 		secure(zwave.basicV1.basicSet(value: 0xFF)),
-		"delay 500",
+		"delay ${duration}",
 		secure(zwave.basicV1.basicSet(value: 0x00)),
 		secure(zwave.basicV1.basicGet())
 	]
-    log.debug "Changing sound to ${currentSound}, volume to ${currentVolume}"    
-    response([
-        secure(zwave.configurationV1.configurationSet(parameterNumber: 37, size: 2, configurationValue: [currentSound, currentVolume])),
-        "delay 1000",
-        secure(zwave.basicV1.basicSet(value: 0x00))
-    ])
 }
 
 private secure(physicalgraph.zwave.Command cmd) {
