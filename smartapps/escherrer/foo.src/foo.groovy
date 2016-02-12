@@ -48,6 +48,9 @@ def initialize() {
     theCommands.each {com ->
         log.debug "Supported Command: ${com.name}"
     }
+    
+    pause 100
+    
     def theAtts = siren.supportedAttributes
 	theAtts.each {att ->
     	log.debug "Supported Attribute: ${att.name}"
