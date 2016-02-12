@@ -20,7 +20,7 @@ preferences {
         input "contacts", "capability.contactSensor", title: "Which?", required: true, multiple: true
     }
         
-	section("Reminder Interval"){
+    section("Reminder Interval"){
         input "reminder", "number", title: "Enter Reminder Minutes", defaultValue: 1, required: true, multiple: false
     }
 }
@@ -48,10 +48,10 @@ def contactHandler(evt) {
 }
 
 def checkSwitch() {
-	log.debug "CheckSwitch Begin"
+    log.debug "CheckSwitch Begin"
     
-	def currentState = contacts?.currentState("contact")
-	def isAnyOpen = false
+    def currentState = contacts?.currentState("contact")
+    def isAnyOpen = false
     
     currentState.each {
     	if (it != null) {
@@ -73,7 +73,7 @@ def checkSwitch() {
 }
 
 def getReminderMilliseconds() {
-	60000 * reminder
+    60000 * reminder
 }
 
 
