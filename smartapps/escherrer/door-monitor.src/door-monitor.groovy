@@ -35,20 +35,17 @@ def updated() {
 }
 
 def initialized() {
+    state.reminderCounter = 0
     subscribe(contacts, "contact", contactHandler)
 }
 
 def contactHandler(evt) {
 	log.debug "Contact changed to ${evt.value} state"
-
-  	if(evt.value == "open") {
-    	log.debug "Beginning switch check"
-        checkSwitch()
-    }
+    checkSwitch()
 }
 
 def checkSwitch() {
-    log.debug "CheckSwitch Begin"
+    log.debug "CheckSwitch Begin - ${state.reminderCounter} iteration"
     
     def currentState = contacts?.currentState("contact")
     def isAnyOpen = false
@@ -61,23 +58,37 @@ def checkSwitch() {
         }
     }
     
-    if (isAnyOpen) {
+    if (isAnyOpen && state.reminderCounter < 120) {
         log.debug "There is a contact open, beeping siren."
+        
         BeepSiren()
+        
+        if (state.reminderCounter > 1) {
+            BeepSiren()
+        }
+        
         def reminderMilliseconds = getReminderMilliseconds()
-        runOnce(new Date(now() + reminderMilliseconds), checkSwitch)
-        log.debug "Reminder set for ${reminderMinutes} milliseconds."
+        def nextRunDate = new Date(now() + reminderMilliseconds)
+        state.reminderCounter = state.reminderCounter + 1
+        runOnce(nextRunDate, checkSwitch)
+        log.debug "Checkswitch requeued to run at ${nextRunDate}"
+    }
+    else
+    {
+        log.debug "No contacts open."
+        state.reminderCounter = 0
     }
     
     log.debug "CheckSwitch End"
 }
 
 def getReminderMilliseconds() {
-    60000 * reminder
+    def reminderMilliseconds = 60000 * reminder
+    log.debug "Reminder milliseconds is ${reminderMilliseconds}"
+    return reminderMilliseconds
 }
 
-
-def BeepSiren() {   
-    Short duration = 500    
+def BeepSiren() {
+    Short duration = 0
     sirens?.chime(duration)
 }
