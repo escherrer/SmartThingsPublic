@@ -63,7 +63,7 @@ def checkSwitch() {
         
         BeepSiren()
         
-        if (state.reminderCounter > 1) {
+        if (state.reminderCounter > 0) {
             BeepSiren()
         }
         
