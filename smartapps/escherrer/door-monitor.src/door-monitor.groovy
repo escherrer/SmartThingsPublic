@@ -12,17 +12,17 @@ definition(
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Developers/whole-house-fan@2x.png")
 
 preferences {
-	section("Sirens"){
-		input "sirens", "capability.alarm", title: "Which?", required: true, multiple: true
-	}
+    section("Sirens"){
+        input "sirens", "capability.alarm", title: "Which?", required: true, multiple: true
+    }
 	
     section("Virtual Switch"){
-		input "contacts", "capability.contactSensor", title: "Which?", required: true, multiple: true
+        input "contacts", "capability.contactSensor", title: "Which?", required: true, multiple: true
     }
         
 	section("Reminder Interval"){
-		input "reminder", "number", title: "Enter Reminder Minutes", defaultValue: 1, required: true, multiple: false
-	}
+        input "reminder", "number", title: "Enter Reminder Minutes", defaultValue: 1, required: true, multiple: false
+    }
 }
 
 def installed() {
@@ -39,12 +39,11 @@ def initialized() {
 }
 
 def contactHandler(evt) {
-
 	log.debug "Contact changed to ${evt.value} state"
 
   	if(evt.value == "open") {
     	log.debug "Beginning switch check"
-		checkSwitch()
+        checkSwitch()
     }
 }
 
@@ -59,12 +58,12 @@ def checkSwitch() {
         	if (it.value == "open") {
                 isAnyOpen = true
             }
-		}
+        }
     }
     
     if (isAnyOpen) {
         log.debug "There is a contact open, beeping siren."
-		BeepSiren()
+        BeepSiren()
         def reminderMilliseconds = getReminderMilliseconds()
         runOnce(new Date(now() + reminderMilliseconds), checkSwitch)
         log.debug "Reminder set for ${reminderMinutes} milliseconds."
