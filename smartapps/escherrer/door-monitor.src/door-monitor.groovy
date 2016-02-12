@@ -77,8 +77,7 @@ def getReminderMilliseconds() {
 }
 
 
-def BeepSiren() {
-    sirens?.siren()
-    sirens?.off()
-    sirens?.off()
+def BeepSiren() {   
+    Short duration = 500    
+    sirens?.chime(duration)
 }
