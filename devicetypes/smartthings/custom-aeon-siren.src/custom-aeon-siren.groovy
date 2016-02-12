@@ -48,7 +48,7 @@ metadata {
 		state "default", label:'', action:"alarm.off", icon:"st.secondary.off"
 	}
 	standardTile("chime", "device.alarm", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
-		state "default", label:'Chime', action:"chime(500)", icon:"st.secondary.on"
+		state "default", label:'Chime', action:"chime(0)", icon:"st.secondary.on"
 	}
     
 	preferences {
@@ -150,11 +150,14 @@ def test() {
 }
 
 def chime(Short duration) {
+	log.debug "Chime with duration of ${duration}"
+    
+    duration = duration ?: 0
+    
     [
-		secure(zwave.basicV1.basicSet(value: 0xFF)),
+        on(),
 		"delay ${duration}",
-		secure(zwave.basicV1.basicSet(value: 0x00)),
-		secure(zwave.basicV1.basicGet())
+        off()
 	]
 }
 
