@@ -113,7 +113,7 @@ def zwaveEvent(physicalgraph.zwave.Command cmd) {
 }
 
 def on() {
-    log.debug "sending on"
+    log.info "sending on"
     [
         secure(zwave.basicV1.basicSet(value: 0xFF)),
         secure(zwave.basicV1.basicGet())
@@ -121,7 +121,7 @@ def on() {
 }
 
 def off() {
-    log.debug "sending off"
+    log.info "sending off"
     [
         secure(zwave.basicV1.basicSet(value: 0x00)),
         secure(zwave.basicV1.basicGet())
@@ -150,7 +150,7 @@ def test() {
 }
 
 def chime(Short duration) {
-    log.debug "Chime with duration of ${duration}"
+    log.info "Chime with duration of ${duration}"
     duration = duration ?: 0
     [
         on(),
