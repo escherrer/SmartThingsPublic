@@ -28,10 +28,10 @@ metadata {
  }
 
  simulator {
-	// reply messages
-	reply "9881002001FF,9881002002": "command: 9881, payload: 002003FF"
-	reply "988100200100,9881002002": "command: 9881, payload: 00200300"
-	reply "9881002001FF,delay 3000,988100200100,9881002002": "command: 9881, payload: 00200300"
+    // reply messages
+    reply "9881002001FF,9881002002": "command: 9881, payload: 002003FF"
+    reply "988100200100,9881002002": "command: 9881, payload: 00200300"
+    reply "9881002001FF,delay 3000,988100200100,9881002002": "command: 9881, payload: 00200300"
  }
 
  tiles(scale: 2) {
@@ -62,13 +62,13 @@ metadata {
 }
 
 def updated() {
-	if(!state.sound) state.sound = 1
-	if(!state.volume) state.volume = 3
+    if(!state.sound) state.sound = 1
+    if(!state.volume) state.volume = 3
 
-	log.debug "settings: ${settings.inspect()}, state: ${state.inspect()}"
+    log.debug "settings: ${settings.inspect()}, state: ${state.inspect()}"
 
-	Short sound = (settings.sound as Short) ?: 1
-	Short volume = (settings.volume as Short) ?: 3
+    Short sound = (settings.sound as Short) ?: 1
+    Short volume = (settings.volume as Short) ?: 3
 
     if (sound != state.sound || volume != state.volume) {
         state.sound = sound
@@ -82,14 +82,14 @@ def updated() {
 }
 
 def parse(String description) {
-	log.debug "parse($description)"
-	def result = null
-	def cmd = zwave.parse(description, [0x98: 1, 0x20: 1, 0x70: 1])
-	if (cmd) {
-		result = zwaveEvent(cmd)
-	}
-	log.debug "Parse returned ${result?.inspect()}"
-	return result
+    log.debug "parse($description)"
+    def result = null
+    def cmd = zwave.parse(description, [0x98: 1, 0x20: 1, 0x70: 1])
+    if (cmd) {
+        result = zwaveEvent(cmd)
+    }
+    log.debug "Parse returned ${result?.inspect()}"
+    return result
 }
 
 def zwaveEvent(physicalgraph.zwave.commands.securityv1.SecurityMessageEncapsulation cmd) {
@@ -113,31 +113,31 @@ def zwaveEvent(physicalgraph.zwave.Command cmd) {
 }
 
 def on() {
-	log.debug "sending on"
-	[
-		secure(zwave.basicV1.basicSet(value: 0xFF)),
-		secure(zwave.basicV1.basicGet())
-	]
+    log.debug "sending on"
+    [
+        secure(zwave.basicV1.basicSet(value: 0xFF)),
+        secure(zwave.basicV1.basicGet())
+    ]
 }
 
 def off() {
-	log.debug "sending off"
-	[
-		secure(zwave.basicV1.basicSet(value: 0x00)),
-		secure(zwave.basicV1.basicGet())
-	]
+    log.debug "sending off"
+    [
+        secure(zwave.basicV1.basicSet(value: 0x00)),
+        secure(zwave.basicV1.basicGet())
+    ]
 }
 
 def strobe() {
-	on()
+    on()
 }
 
 def siren() {
-	on()
+    on()
 }
 
 def both() {
-	on()
+    on()
 }
 
 def test() {
@@ -150,17 +150,15 @@ def test() {
 }
 
 def chime(Short duration) {
-	log.debug "Chime with duration of ${duration}"
-    
+    log.debug "Chime with duration of ${duration}"
     duration = duration ?: 0
-    
     [
         on(),
-		"delay ${duration}",
+        "delay ${duration}",
         off()
-	]
+    ]
 }
 
 private secure(physicalgraph.zwave.Command cmd) {
-	zwave.securityV1.securityMessageEncapsulation().encapsulate(cmd).format()
+    zwave.securityV1.securityMessageEncapsulation().encapsulate(cmd).format()
 }
