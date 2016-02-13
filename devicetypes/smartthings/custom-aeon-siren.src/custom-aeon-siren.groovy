@@ -93,19 +93,19 @@ def parse(String description) {
 }
 
 def zwaveEvent(physicalgraph.zwave.commands.securityv1.SecurityMessageEncapsulation cmd) {
-	def encapsulatedCommand = cmd.encapsulatedCommand([0x20: 1, 0x85: 2, 0x70: 1])
+    def encapsulatedCommand = cmd.encapsulatedCommand([0x20: 1, 0x85: 2, 0x70: 1])
 	// log.debug "encapsulated: $encapsulatedCommand"
-	if (encapsulatedCommand) {
-		zwaveEvent(encapsulatedCommand)
-	}
+    if (encapsulatedCommand) {
+        zwaveEvent(encapsulatedCommand)
+    }
 }
 
 def zwaveEvent(physicalgraph.zwave.commands.basicv1.BasicReport cmd) {
-	log.debug "rx $cmd"
-	[
-		createEvent([name: "switch", value: cmd.value ? "on" : "off", displayed: false]),
-		createEvent([name: "alarm", value: cmd.value ? "both" : "off"])
-	]
+    log.debug "rx $cmd"
+    [
+        createEvent([name: "switch", value: cmd.value ? "on" : "off", displayed: false]),
+        createEvent([name: "alarm", value: cmd.value ? "both" : "off"])
+    ]
 }
 
 def zwaveEvent(physicalgraph.zwave.Command cmd) {
