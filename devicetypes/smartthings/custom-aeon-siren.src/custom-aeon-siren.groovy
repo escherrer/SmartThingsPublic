@@ -142,10 +142,10 @@ def both() {
 
 def test() {
 	[
-		secure(zwave.basicV1.basicSet(value: 0xFF)),
-		"delay 4000",
-		secure(zwave.basicV1.basicSet(value: 0x00)),
-		secure(zwave.basicV1.basicGet())
+        secure(zwave.basicV1.basicSet(value: 0xFF)),
+        "delay 4000",
+        secure(zwave.basicV1.basicSet(value: 0x00)),
+        secure(zwave.basicV1.basicGet())
 	]
 }
 
@@ -153,9 +153,10 @@ def chime(Short duration) {
     log.info "Chime with duration of ${duration}"
     duration = duration ?: 0
     [
-        on(),
+        secure(zwave.basicV1.basicSet(value: 0xFF)),
         "delay ${duration}",
-        off()
+        secure(zwave.basicV1.basicSet(value: 0x00)),
+        secure(zwave.basicV1.basicGet())
     ]
 }
 
