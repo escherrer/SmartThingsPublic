@@ -149,9 +149,13 @@ def test() {
 	]
 }
 
-def chime(Short duration) {
+def chime(Short duration) {    
     log.info "Chime with duration of ${duration}"
-    duration = duration ?: 0
+    
+    if (duration == null || duration < 100) {
+        duration = 100
+    }
+    
     [
         secure(zwave.basicV1.basicSet(value: 0xFF)),
         "delay ${duration}",
