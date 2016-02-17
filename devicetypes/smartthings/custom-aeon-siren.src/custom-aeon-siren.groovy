@@ -152,8 +152,8 @@ def test() {
 def chime(Short duration) {    
     log.info "Chime with duration of ${duration}"
     
-    if (duration == null || duration < 300) {
-        duration = 300
+    if (duration == null || duration < 250) {
+        duration = 250
     }
     
     [
