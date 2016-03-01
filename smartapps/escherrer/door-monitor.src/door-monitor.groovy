@@ -22,7 +22,8 @@ preferences {
         
     section("Reminder Interval"){
         input "reminder", "number", title: "Enter Reminder Minutes", defaultValue: 1, required: true, multiple: false
-    }
+        input "beepOnOpen", "bool", title: "Beep when opened?", defaultValue: true, required: true, multiple: false
+    }    
 }
 
 def installed() {
@@ -61,7 +62,12 @@ def checkSwitch() {
     if (isAnyOpen && state.reminderCounter < 120) {
         log.debug "There is a contact open, beeping siren."
         
-        BeepSiren()
+        def currMode = location.mode
+        
+        if (beepOnOpen)
+        {
+            BeepSiren()
+        }
         
         if (state.reminderCounter > 0) {
             pause 1000
