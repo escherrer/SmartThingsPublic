@@ -13,7 +13,7 @@ definition(
 
 preferences {
     section("Sirens"){
-        input "sirens", "capability.alarm", title: "Which?", required: true, multiple: true
+        input "sirens", "capability.alarm", title: "Which?", required: false, multiple: true
     }
 	
     section("Virtual Switch"){
@@ -23,6 +23,7 @@ preferences {
     section("Reminder Interval"){
         input "reminder", "number", title: "Enter Reminder Minutes", defaultValue: 1, required: true, multiple: false
         input "beepOnOpen", "bool", title: "Beep when opened?", defaultValue: true, required: true, multiple: false
+        input "notifyOnIsOpen", "bool", title: "Notify when left open?", defaultValue: true, required: true, multiple: false
     }    
 }
 
@@ -50,11 +51,13 @@ def checkSwitch() {
     
     def currentState = contacts?.currentState("contact")
     def isAnyOpen = false
+    def openDoor
     
     currentState.each {
     	if (it != null) {
         	if (it.value == "open") {
                 isAnyOpen = true
+                openDoor = it
             }
         }
     }
@@ -72,6 +75,10 @@ def checkSwitch() {
         if (state.reminderCounter > 0) {
             pause 1000
             BeepSiren()
+            
+            if (notifyOnIsOpen) {
+                sendPush("The ${openDoor.displayName} is open!")
+            }
         }
         
         def reminderMilliseconds = getReminderMilliseconds()
