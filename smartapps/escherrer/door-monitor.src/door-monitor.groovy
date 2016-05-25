@@ -21,9 +21,9 @@ preferences {
     }
         
     section("Reminder Interval"){
-        input "reminder", "number", title: "Enter Reminder Minutes", defaultValue: 1, required: true, multiple: false
+        input "beepReminder", "number", title: "Enter Beep Reminder Minutes", defaultValue: 1, required: true, multiple: false
         input "beepOnOpen", "bool", title: "Beep when opened?", defaultValue: true, required: true, multiple: false
-        input "notifyOnIsOpen", "bool", title: "Notify when left open?", defaultValue: true, required: true, multiple: false
+        input "notifyReminder", "number", title: "Send Notification After X Reminders", defaultValue: 120, required: true, multiple: false
     }    
 }
 
@@ -65,10 +65,7 @@ def checkSwitch() {
     if (isAnyOpen && state.reminderCounter < 120) {
         log.debug "There is a contact open, beeping siren."
         
-        def currMode = location.mode
-        
-        if (beepOnOpen)
-        {
+        if (beepOnOpen) {
             BeepSiren()
         }
         
@@ -76,16 +73,16 @@ def checkSwitch() {
             pause 1000
             BeepSiren()
             
-            if (notifyOnIsOpen) {
-                sendPush("The ${openDoor.displayName} is open!")
+            if (state.reminderCounter == notifyReminder) {
+            	sendPush("The ${openDoor.displayName} is open!")
             }
         }
         
-        def reminderMilliseconds = getReminderMilliseconds()
+        def reminderMilliseconds = getBeepReminderMilliseconds()
         def nextRunDate = new Date(now() + reminderMilliseconds)
         state.reminderCounter = state.reminderCounter + 1
         runOnce(nextRunDate, checkSwitch)
-        log.debug "Checkswitch requeued to run at ${nextRunDate}"
+        log.debug "checkSwitch requeued to run at ${nextRunDate}"
     }
     else
     {
@@ -96,9 +93,9 @@ def checkSwitch() {
     log.debug "CheckSwitch End"
 }
 
-def getReminderMilliseconds() {
-    def reminderMilliseconds = 60000 * reminder
-    log.debug "Reminder milliseconds is ${reminderMilliseconds}"
+def getBeepReminderMilliseconds() {
+    def reminderMilliseconds = 60000 * beepReminder
+    log.debug "Beep Reminder milliseconds is ${reminderMilliseconds}"
     return reminderMilliseconds
 }
 
