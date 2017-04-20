@@ -14,6 +14,7 @@ definition(
 preferences {
     section("Speaker"){
         input "speakers", "capability.audioNotification", title: "Which?", required: false, multiple: true
+        input "soundId", "number", title: "Enter Sound ID", defaultValue: 1, required: true, multiple: false
     }
 	
     section("Virtual Switch"){
@@ -100,5 +101,5 @@ def getBeepReminderMilliseconds() {
 }
 
 def BeepSiren() {
-    speakers?.playTrack(1)
+    speakers?.playTrack(soundId)
 }
