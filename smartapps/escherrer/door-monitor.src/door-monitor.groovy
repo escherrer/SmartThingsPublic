@@ -12,8 +12,8 @@ definition(
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Developers/whole-house-fan@2x.png")
 
 preferences {
-    section("Sirens"){
-        input "sirens", "capability.alarm", title: "Which?", required: false, multiple: true
+    section("Speaker"){
+        input "speakers", "capability.audioNotification", title: "Which?", required: false, multiple: true
     }
 	
     section("Virtual Switch"){
@@ -100,6 +100,5 @@ def getBeepReminderMilliseconds() {
 }
 
 def BeepSiren() {
-    Short duration = 0
-    sirens?.chime(duration)
+    speakers?.playTrack(1)
 }
