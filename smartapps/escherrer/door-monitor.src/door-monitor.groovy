@@ -71,7 +71,7 @@ def checkSwitch() {
         }
         
         if (state.reminderCounter > 0) {
-            pause 1000
+            pause 2000
             BeepSiren()
             
             if (state.reminderCounter == notifyReminder) {
